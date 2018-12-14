@@ -27,3 +27,4 @@ resource "openstack_networking_floatingip_v2" "bastion" {
   pool       = "${var.floatingip_pool}"
   depends_on = ["null_resource.dummy_dependency"]
 }
+

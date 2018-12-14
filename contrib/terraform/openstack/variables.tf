@@ -156,3 +156,19 @@ variable "worker_allowed_ports" {
     }
   ]
 }
+
+variable "use_loadbalancer" {
+  default = 0
+}
+
+variable "loadbalancer_provider" {
+  default = "octavia"
+}
+
+variable "lb_listener_port" {
+    default = "443"
+}
+
+variable "lb_backend_listener_port" {
+    default = "6443"
+}
