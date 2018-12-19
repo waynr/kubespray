@@ -10,7 +10,19 @@ variable "loadbalancer_provider" {
     default = ""
 }
 
+variable "number_of_k8s_masters" {
+    default = ""
+}
+
+variable "number_of_k8s_masters_no_floating_ip" {
+    default = ""
+}
+
 variable "number_of_k8s_masters_no_etcd" {
+    default = ""
+}
+
+variable "number_of_k8s_masters_no_floating_ip_no_etcd" {
     default = ""
 }
 
@@ -23,6 +35,18 @@ variable "use_loadbalancer" {
 }
 
 variable "k8s_master_fixed_ip" {
+    type = "list"
+}
+
+variable "k8s_master_ne_fixed_ip" {
+    type = "list"
+}
+
+variable "k8s_master_nf_fixed_ip" {
+    type = "list"
+}
+
+variable "k8s_master_nf_ne_fixed_ip" {
     type = "list"
 }
 

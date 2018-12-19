@@ -33,8 +33,32 @@ resource "openstack_lb_monitor_v2" "master_lb_monitor" {
 }
 
 resource "openstack_lb_member_v2" "master_lb_members" {
-  count         = "${var.number_of_k8s_masters_no_etcd}"
+  count         = "${var.number_of_k8s_masters}"
   address       = "${element(var.k8s_master_fixed_ip, count.index)}"
+  pool_id       = "${openstack_lb_pool_v2.master_lb_pool.id}"
+  subnet_id     = "${var.vip_subnet_id}"
+  protocol_port = "${var.lb_backend_listener_port}"
+}
+
+resource "openstack_lb_member_v2" "master_lb_members_nf" {
+  count         = "${var.number_of_k8s_masters_no_floating_ip}"
+  address       = "${element(var.k8s_master_nf_fixed_ip, count.index)}"
+  pool_id       = "${openstack_lb_pool_v2.master_lb_pool.id}"
+  subnet_id     = "${var.vip_subnet_id}"
+  protocol_port = "${var.lb_backend_listener_port}"
+}
+
+resource "openstack_lb_member_v2" "master_lb_members_ne" {
+  count         = "${var.number_of_k8s_masters_no_etcd}"
+  address       = "${element(var.k8s_master_ne_fixed_ip, count.index)}"
+  pool_id       = "${openstack_lb_pool_v2.master_lb_pool.id}"
+  subnet_id     = "${var.vip_subnet_id}"
+  protocol_port = "${var.lb_backend_listener_port}"
+}
+
+resource "openstack_lb_member_v2" "master_lb_members_nf_ne" {
+  count         = "${var.number_of_k8s_masters_no_floating_ip_no_etcd}"
+  address       = "${element(var.k8s_master_nf_ne_fixed_ip, count.index)}"
   pool_id       = "${openstack_lb_pool_v2.master_lb_pool.id}"
   subnet_id     = "${var.vip_subnet_id}"
   protocol_port = "${var.lb_backend_listener_port}"
