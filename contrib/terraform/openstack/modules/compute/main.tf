@@ -34,6 +34,19 @@ resource "openstack_networking_secgroup_rule_v2" "bastion" {
   security_group_id = "${openstack_networking_secgroup_v2.bastion.id}"
 }
 
+resource "openstack_networking_secgroup_v2" "k8s-global" {
+  name        = "${var.cluster_name}-k8s-global"
+  description = "${var.cluster_name} - Kubernetes"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "icmp" {
+  direction = "ingress"
+  ethertype = "IPv4"
+  protocol = "icmp"
+  remote_ip_prefix = "0.0.0.0/0"
+  security_group_id = "${openstack_networking_secgroup_v2.k8s-global.id}"
+}
+
 resource "openstack_networking_secgroup_v2" "k8s" {
   name        = "${var.cluster_name}-k8s"
   description = "${var.cluster_name} - Kubernetes"
@@ -105,6 +118,7 @@ resource "openstack_compute_instance_v2" "k8s_master" {
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
     "${openstack_networking_secgroup_v2.bastion.name}",
     "${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
     "default",
   ]
 
@@ -135,6 +149,7 @@ resource "openstack_compute_instance_v2" "k8s_master_no_etcd" {
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
     "${openstack_networking_secgroup_v2.bastion.name}",
     "${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
   ]
 
   metadata = {
@@ -161,7 +176,9 @@ resource "openstack_compute_instance_v2" "etcd" {
     name = "${var.network_name}"
   }
 
-  security_groups = ["${openstack_networking_secgroup_v2.k8s.name}"]
+  security_groups = ["${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
+  ]
 
   metadata = {
     ssh_user         = "${var.ssh_user}"
@@ -185,6 +202,7 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
     "${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
     "default",
   ]
 
@@ -210,6 +228,7 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s_master.name}",
     "${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
   ]
 
   metadata = {
@@ -235,6 +254,7 @@ resource "openstack_compute_instance_v2" "k8s_node" {
   security_groups = ["${openstack_networking_secgroup_v2.k8s.name}",
     "${openstack_networking_secgroup_v2.bastion.name}",
     "${openstack_networking_secgroup_v2.worker.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
     "default",
   ]
 
@@ -264,6 +284,7 @@ resource "openstack_compute_instance_v2" "k8s_node_no_floating_ip" {
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s.name}",
     "${openstack_networking_secgroup_v2.worker.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
     "default",
   ]
 
@@ -319,6 +340,7 @@ resource "openstack_compute_instance_v2" "glusterfs_node_no_floating_ip" {
   }
 
   security_groups = ["${openstack_networking_secgroup_v2.k8s.name}",
+    "${openstack_networking_secgroup_v2.k8s-global.name}",
     "default",
   ]
 
