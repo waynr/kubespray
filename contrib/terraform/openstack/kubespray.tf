@@ -68,15 +68,21 @@ module "compute" {
 module "loadbalancer" {
   source = "modules/loadbalancer"
 
-  use_loadbalancer              = "${var.use_loadbalancer}"
-  vip_subnet_id                 = "${module.network.subnet_id}"
-  cluster_name                  = "${var.cluster_name}"
-  loadbalancer_provider         = "${var.loadbalancer_provider}"
-  number_of_k8s_masters_no_etcd = "${var.number_of_k8s_masters_no_etcd}"
-  floatingip_pool               = "${var.floatingip_pool}"
-  k8s_master_fixed_ip           = "${module.compute.k8s_master_fixed_ip}"
-  lb_listener_port              = "${var.lb_listener_port}"
-  lb_backend_listener_port      = "${var.lb_backend_listener_port}"
+  use_loadbalancer                             = "${var.use_loadbalancer}"
+  vip_subnet_id                                = "${module.network.subnet_id}"
+  cluster_name                                 = "${var.cluster_name}"
+  loadbalancer_provider                        = "${var.loadbalancer_provider}"
+  number_of_k8s_masters                        = "${var.number_of_k8s_masters}"
+  number_of_k8s_masters_no_etcd                = "${var.number_of_k8s_masters_no_etcd}"
+  number_of_k8s_masters_no_floating_ip         = "${var.number_of_k8s_masters_no_floating_ip}"
+  number_of_k8s_masters_no_floating_ip_no_etcd = "${var.number_of_k8s_masters_no_floating_ip_no_etcd}"
+  floatingip_pool                              = "${var.floatingip_pool}"
+  k8s_master_fixed_ip                          = "${module.compute.k8s_master_fixed_ip}"
+  k8s_master_ne_fixed_ip                       = "${module.compute.k8s_master_ne_fixed_ip}"
+  k8s_master_nf_fixed_ip                       = "${module.compute.k8s_master_nf_fixed_ip}"
+  k8s_master_nf_ne_fixed_ip                    = "${module.compute.k8s_master_nf_ne_fixed_ip}"
+  lb_listener_port                             = "${var.lb_listener_port}"
+  lb_backend_listener_port                     = "${var.lb_backend_listener_port}"
 }
 
 output "private_subnet_id" {
