@@ -180,3 +180,12 @@ variable "kubespray_dir" {
 variable "inventory_dir" {
   default = "contrib/terraform"
 }
+
+variable "base_domain" {
+  default = ""
+}
+
+variable "api_endpoint_name" {
+  default = "k8s"
+}
+
