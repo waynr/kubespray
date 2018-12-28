@@ -85,3 +85,11 @@ variable "worker_allowed_ports" {
 variable "kubespray_dir" {}
 
 variable "inventory_dir" {}
+
+variable "etcd_anti_affinity" {
+  default = "true"
+}
+
+variable "master_anti_affinity" {
+  default = "true"
+}
