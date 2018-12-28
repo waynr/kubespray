@@ -189,3 +189,11 @@ variable "api_endpoint_name" {
   default = "k8s"
 }
 
+variable "etcd_anti_affinity" {
+  default = "true"
+}
+
+variable "master_anti_affinity" {
+  default = "true"
+}
+
