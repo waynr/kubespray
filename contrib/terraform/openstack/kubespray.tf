@@ -116,6 +116,19 @@ module "dns" {
   k8s_node_nf_fixed_ip                         = "${module.compute.k8s_node_nf_fixed_ip}"
   glusterfs_node_nf_fixed_ip                   = "${module.compute.glusterfs_node_nf_fixed_ip}"
   
+data "template_file" "ansible_groupvars" {
+  template = "${file("${var.kubespray_dir}/contrib/terraform/openstack/ansible_loadbalancer_groupvars_template.yml.tpl")}"
+  vars {
+    address = "${module.loadbalancer.master_lb_fip[0]}"
+    port = "${var.lb_listener_port}"
+    network_id = "${var.external_net}"
+    subnet_id = "${module.network.subnet_id}"
+  }
+}
+
+resource "local_file" "ansible_groupvars" {
+  content = "${data.template_file.ansible_groupvars.rendered}"
+  filename = "${var.inventory_dir}/group_vars/loadbalancer-vars.yml"
 }
 
 output "private_subnet_id" {
