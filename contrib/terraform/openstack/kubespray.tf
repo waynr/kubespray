@@ -72,6 +72,7 @@ module "loadbalancer" {
 
   use_loadbalancer                             = "${var.use_loadbalancer}"
   vip_subnet_id                                = "${module.network.subnet_id}"
+  external_net                                 = "${var.external_net}"
   cluster_name                                 = "${var.cluster_name}"
   loadbalancer_provider                        = "${var.loadbalancer_provider}"
   number_of_k8s_masters                        = "${var.number_of_k8s_masters}"
@@ -85,21 +86,8 @@ module "loadbalancer" {
   k8s_master_nf_ne_fixed_ip                    = "${module.compute.k8s_master_nf_ne_fixed_ip}"
   lb_listener_port                             = "${var.lb_listener_port}"
   lb_backend_listener_port                     = "${var.lb_backend_listener_port}"
-}
-
-data "template_file" "ansible_groupvars" {
-  template = "${file("${var.kubespray_dir}/contrib/terraform/openstack/ansible_loadbalancer_groupvars_template.yml.tpl")}"
-  vars {
-    address = "${module.loadbalancer.master_lb_fip[0]}"
-    port = "${var.lb_listener_port}"
-    network_id = "${var.external_net}"
-    subnet_id = "${module.network.subnet_id}"
-  }
-}
-
-resource "local_file" "ansible_groupvars" {
-  content = "${data.template_file.ansible_groupvars.rendered}"
-  filename = "${var.inventory_dir}/group_vars/loadbalancer-vars.yml"
+  kubespray_dir                                = "${var.kubespray_dir}"
+  inventory_dir                                = "${var.inventory_dir}"
 }
 
 output "private_subnet_id" {
