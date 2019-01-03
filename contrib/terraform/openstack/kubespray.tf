@@ -87,6 +87,37 @@ module "loadbalancer" {
   lb_backend_listener_port                     = "${var.lb_backend_listener_port}"
 }
 
+module "dns" {
+  source = "modules/dns"
+
+  api_ip_address                               = "${module.loadbalancer.master_lb_fip}"
+  base_domain                                  = "${var.base_domain}"
+  cluster_name                                 = "${var.cluster_name}"
+  number_of_bastions                           = "${var.number_of_bastions}"
+  number_of_etcd                               = "${var.number_of_etcd}"
+  number_of_k8s_masters                        = "${var.number_of_k8s_masters}"
+  number_of_k8s_masters_no_etcd                = "${var.number_of_k8s_masters_no_etcd}"
+  number_of_k8s_masters_no_floating_ip         = "${var.number_of_k8s_masters_no_floating_ip}"
+  number_of_k8s_masters_no_floating_ip_no_etcd = "${var.number_of_k8s_masters_no_floating_ip_no_etcd}"
+  number_of_k8s_nodes                          = "${var.number_of_k8s_nodes}"
+  number_of_k8s_nodes_no_floating_ip           = "${var.number_of_k8s_nodes_no_floating_ip}"
+  number_of_gfs_nodes_no_floating_ip           = "${var.number_of_gfs_nodes_no_floating_ip}"
+  bastion_fips                                 = "${module.ips.bastion_fips}"
+  k8s_master_fips                              = "${module.ips.k8s_master_fips}"
+  k8s_master_no_etcd_fips                      = "${module.ips.k8s_master_no_etcd_fips}"
+  k8s_node_fips                                = "${module.ips.k8s_node_fips}"
+  k8s_master_fixed_ip                          = "${module.compute.k8s_master_fixed_ip}"
+  bastion_fixed_ip                             = "${module.compute.bastion_fixed_ip}"
+  etcd_fixed_ip                                = "${module.compute.etcd_fixed_ip}"
+  k8s_master_ne_fixed_ip                       = "${module.compute.k8s_master_ne_fixed_ip}"
+  k8s_master_nf_fixed_ip                       = "${module.compute.k8s_master_nf_fixed_ip}"
+  k8s_master_nf_ne_fixed_ip                    = "${module.compute.k8s_master_nf_ne_fixed_ip}"
+  k8s_node_fixed_ip                            = "${module.compute.k8s_node_fixed_ip}"
+  k8s_node_nf_fixed_ip                         = "${module.compute.k8s_node_nf_fixed_ip}"
+  glusterfs_node_nf_fixed_ip                   = "${module.compute.glusterfs_node_nf_fixed_ip}"
+  
+}
+
 output "private_subnet_id" {
   value = "${module.network.subnet_id}"
 }
