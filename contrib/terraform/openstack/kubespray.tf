@@ -63,6 +63,8 @@ module "compute" {
   worker_allowed_ports                         = "${var.worker_allowed_ports}"
   kubespray_dir                                = "${var.kubespray_dir}"
   inventory_dir                                = "${var.inventory_dir}"
+  etcd_anti_affinity                           = "${var.etcd_anti_affinity}"
+  master_anti_affinity                         = "${var.master_anti_affinity}"
 
   network_id = "${module.network.router_id}"
 }
