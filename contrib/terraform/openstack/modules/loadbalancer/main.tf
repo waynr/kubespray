@@ -69,3 +69,19 @@ resource "openstack_networking_floatingip_v2" "master_lb" {
   pool       = "${var.floatingip_pool}"
   port_id    = "${openstack_lb_loadbalancer_v2.master_lb.vip_port_id}"
 }
+
+data "template_file" "ansible_groupvars" {
+  template = "${file("${var.kubespray_dir}/contrib/terraform/openstack/modules/loadbalancer/ansible_groupvars_template.yml.tpl")}"
+  vars {
+    address = "${openstack_networking_floatingip_v2.master_lb.address}"
+    port = "${var.lb_listener_port}"
+    network_id = "${var.external_net}"
+    subnet_id = "${var.vip_subnet_id}"
+  }
+}
+
+resource "local_file" "ansible_groupvars" {
+  content = "${data.template_file.ansible_groupvars.rendered}"
+  filename = "${var.inventory_dir}/group_vars/loadbalancer-vars.yml"
+}
+

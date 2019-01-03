@@ -2,6 +2,10 @@ variable "vip_subnet_id" {
     default = ""
 }
 
+variable "external_net" {
+    default = ""
+}
+
 variable "cluster_name" {
     default = ""
 }
@@ -61,3 +65,7 @@ variable "lb_listener_port" {
 variable "lb_backend_listener_port" {
     default = ""
 }
+
+variable "kubespray_dir" {}
+
+variable "inventory_dir" {}
