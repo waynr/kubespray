@@ -7,7 +7,7 @@ mkdir -p $BINDIR
 
 cd $BINDIR
 
-if [[ -e $BINDIR/.bootstrapped ]]; then
+if [[ -e $BINDIR/.bootstrapped && -L $BINDIR/pypy/lib/libtinfo.so.5 ]]; then
   exit 0
 fi
 
