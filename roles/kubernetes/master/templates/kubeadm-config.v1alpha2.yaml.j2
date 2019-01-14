@@ -134,7 +134,7 @@ controllerManagerExtraArgs:
 {% elif cloud_provider is defined and cloud_provider in ["external"] %}
   cloud-config: {{ kube_config_dir }}/cloud_config
 {% endif %}
-{% if cloud_provider is defined and cloud_provider in ["openstack", "azure", "vsphere", "aws", "external"] %}
+{% if cloud_provider is defined and cloud_provider in ["openstack", "azure", "vsphere", "aws", "external"] or controller_manager_extra_volumes %}
 controllerManagerExtraVolumes:
 {% if cloud_provider is defined and cloud_provider in ["openstack"] and openstack_cacert is defined and openstack_cacert != "" %}
 - name: openstackcacert
@@ -147,7 +147,16 @@ controllerManagerExtraVolumes:
   mountPath: {{ kube_config_dir }}/cloud_config
 {% endif %}
 {% endif %}
-{% if kubernetes_audit or kube_basic_auth|default(true) or kube_token_auth|default(true) %}
+{% if scheduler_extra_volumes %}
+schedulerExtraVolumes:
+{% for volume in scheduler_extra_volumes %}
+- name: {{ volume.name }}
+  hostPath: {{ volume.hostPath }}
+  mountPath: {{ volume.mountPath }}
+  writable: {{ volume.writable | default(false)}}
+{% endfor %}
+{% endif %}
+{% if kubernetes_audit or kube_basic_auth|default(true) or kube_token_auth|default(true) or ( cloud_provider is defined and cloud_provider in ["openstack", "azure", "vsphere", "aws"] ) or apiserver_extra_volumes %}
 apiServerExtraVolumes:
 {% if kube_basic_auth|default(true) %}
 - name: basic-auth-config
