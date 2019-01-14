@@ -190,9 +190,6 @@ schedulerExtraArgs:
 {% if kube_feature_gates %}
   feature-gates: {{ kube_feature_gates|join(',') }}
 {% endif %}
-{% if volume_cross_zone_attachment %}
-  policy-config-file: {{ kube_config_dir }}/kube-scheduler-policy.yaml
-{% endif %}
 {% if kube_kubeadm_scheduler_extra_args|length > 0 %}
 {% for key in kube_kubeadm_scheduler_extra_args %}
   {{ key }}: "{{ kube_kubeadm_scheduler_extra_args[key] }}"
