@@ -1,7 +1,13 @@
 apiVersion: kubeadm.k8s.io/v1alpha2
 kind: MasterConfiguration
 api:
-{% if groups['kube-master'] | length > 1 and kubeadm_config_api_fqdn is defined %}
+{% if 'kube-master' in group_names and kubeadm_config_api_fqdn is defined and kubeadm_config_use_fqdn_for_api %}
+  controlPlaneEndpoint: {{ kubeadm_config_api_fqdn }}
+  bindPort: {{ loadbalancer_apiserver.port | default(kube_apiserver_port) }}
+{% elif 'kube-master' in group_names %}
+  controlPlaneEndpoint: {{ ip | default(ansible_default_ipv4.address) }}
+  bindPort: {{ kube_apiserver_port }}
+{% elif 'kube-node' in group_names and kubeadm_config_api_fqdn is defined %}
   controlPlaneEndpoint: {{ kubeadm_config_api_fqdn }}
   bindPort: {{ loadbalancer_apiserver.port | default(kube_apiserver_port) }}
 {% else %}

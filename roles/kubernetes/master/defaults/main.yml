@@ -125,6 +125,10 @@ kube_kubeadm_apiserver_extra_args: {}
 kube_kubeadm_controller_extra_args: {}
 kube_kubeadm_scheduler_extra_args: {}
 
+## Determine whether or not to use kubeadm_admin_config_api_fqdn for defining
+# kubeadm control plane endpoint.
+kubeadm_config_use_fqdn_for_api: true
+
 ## Extra control plane host volume mounts
 ## Example:
 #apiserver_extra_volumes:
