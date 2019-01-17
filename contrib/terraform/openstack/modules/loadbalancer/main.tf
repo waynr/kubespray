@@ -82,6 +82,5 @@ data "template_file" "ansible_groupvars" {
 
 resource "local_file" "ansible_groupvars" {
   content = "${data.template_file.ansible_groupvars.rendered}"
-  filename = "${var.inventory_dir}/group_vars/loadbalancer-vars.yml"
+  filename = "${var.inventory_dir}/group_vars/all/loadbalancer-vars.yml"
 }
-
