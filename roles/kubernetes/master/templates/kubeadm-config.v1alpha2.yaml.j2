@@ -164,6 +164,14 @@ schedulerExtraVolumes:
 {% endif %}
 {% if kubernetes_audit or kube_basic_auth|default(true) or kube_token_auth|default(true) or ( cloud_provider is defined and cloud_provider in ["openstack", "azure", "vsphere", "aws"] ) or apiserver_extra_volumes %}
 apiServerExtraVolumes:
+- name: authentication-token-webhook
+  hostPath: "{{ kube_config_dir }}/authentication-token-webhook.conf"
+  mountPath: "{{ kube_config_dir }}/authentication-token-webhook.conf"
+{% if cloud_provider is defined and cloud_provider in ["openstack"] and openstack_cacert is defined and openstack_cacert != "" %}
+- name: openstackcacert
+  hostPath: "{{ kube_config_dir }}/openstack-cacert.pem"
+  mountPath: "{{ kube_config_dir }}/openstack-cacert.pem"
+{% endif %}
 {% if kube_basic_auth|default(true) %}
 - name: basic-auth-config
   hostPath: {{ kube_users_dir }}

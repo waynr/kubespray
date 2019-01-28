@@ -29,6 +29,20 @@
     state: directory
   when: dynamic_kubelet_configuration
 
+- name: Write authentication-token-webhook-config for kube-apiserver
+  template:
+    src: authentication-token-webhook.conf.j2
+    dest: "{{ kube_config_dir }}/authentication-token-webhook.conf"
+    backup: yes
+  tags:
+    - kube-apiserver
+
+- name: "Set authentication-token-webhook-config-file on kube-apiserver"
+  set_fact:
+     kube_kubeadm_apiserver_extra_args:
+       authentication-token-webhook-config-file: "{{ kube_config_dir }}/authentication-token-webhook.conf"
+       enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,PodSecurityPolicy"
+
 - name: Write kubelet config file (kubeadm)
   template:
     src: kubelet.kubeadm.env.j2
@@ -116,7 +130,7 @@
   modprobe:
     name: nf_conntrack
     state: present
-  when: 
+  when:
     - enable_nf_conntrack is failed
     - kube_proxy_mode == 'ipvs'
 
