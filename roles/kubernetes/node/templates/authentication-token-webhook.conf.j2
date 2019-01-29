@@ -2,7 +2,7 @@ clusters:
   - name: auth-service
     cluster:
       certificate-authority: "{{ kube_config_dir }}/openstack-cacert.pem"
-      server: "{{ kaas_authentication_token_webhook_url }}"
+      server: "http://keystone-auth.rackspace-system.svc.cluster.local:8080/authenticate/token"
 contexts:
   - context:
       cluster: auth-service
