@@ -1,0 +1,10 @@
+clusters:
+  - name: auth-service
+    cluster:
+      certificate-authority: "{{ kube_config_dir }}/openstack-cacert.pem"
+      server: "{{ kaas_authentication_token_webhook_url }}"
+contexts:
+  - context:
+      cluster: auth-service
+    name: auth-service
+current-context: auth-service
