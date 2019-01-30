@@ -108,8 +108,8 @@ apiServerExtraArgs:
   runtime-config: {{ kube_api_runtime_config | join(',') }}
 {% endif %}
   allow-privileged: "true"
-{% for key in kube_kubeadm_apiserver_extra_args %}
-  {{ key }}: "{{ kube_kubeadm_apiserver_extra_args[key] }}"
+{% for key, value in kube_kubeadm_apiserver_extra_args|dictsort %}
+  {{ key }}: "{{ value }}"
 {% endfor %}
 {% if kube_feature_gates %}
   feature-gates: {{ kube_feature_gates|join(',') }}
