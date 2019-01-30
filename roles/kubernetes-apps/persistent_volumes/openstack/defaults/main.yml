@@ -1,7 +1,7 @@
 ---
 persistent_volumes_enabled: false
 storage_classes:
-  - name: standard
+  - name: openstack
     is_default: true
     parameters:
       availability: nova
