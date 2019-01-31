@@ -1,0 +1,18 @@
+[Unit]
+Description=Prometheus Node Exporter
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+ExecStart={{ docker_bin_dir }}/docker run \
+  --volume=/proc:/host/proc:ro \
+  --volume=/sys:/host/sys:ro \
+  --network=host \
+  quay.io/prometheus/node-exporter:v0.15.0 \
+  --path.procfs=/host/proc \
+  --path.sysfs=/host/sys
+KillMode=mixed
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

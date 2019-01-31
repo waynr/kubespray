@@ -44,6 +44,12 @@
     backup: yes
   when: is_etcd_master and etcd_events_cluster_setup
 
+- name: Configure | Copy node-exporter.service systemd file
+  template:
+    src: "node-exporter-{{ etcd_deployment_type }}.service.j2"
+    dest: /etc/systemd/system/node-exporter.service
+    backup: yes
+
 - name: Configure | reload systemd
   command: systemctl daemon-reload
   when: is_etcd_master
@@ -61,6 +67,12 @@
     state: started
     enabled: yes
   when: is_etcd_master and etcd_events_cluster_setup
+
+- name: Configure | Ensure node-exporter is running
+  service:
+    name: node-exporter
+    state: started
+    enabled: yes
 
 - name: Configure | Check if etcd cluster is healthy
   shell: "{{ bin_dir }}/etcdctl --endpoints={{ etcd_access_addresses }} cluster-health | grep -q 'cluster is healthy'"
