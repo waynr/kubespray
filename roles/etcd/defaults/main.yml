@@ -62,3 +62,5 @@ etcd_secure_client: true
 
 # Enable peer client cert authentication
 etcd_peer_client_auth: true
+
+etcd_node_exporter_version: v0.15.0

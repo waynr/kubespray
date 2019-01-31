@@ -8,7 +8,7 @@ ExecStart={{ docker_bin_dir }}/docker run \
   --volume=/proc:/host/proc:ro \
   --volume=/sys:/host/sys:ro \
   --network=host \
-  quay.io/prometheus/node-exporter:v0.15.0 \
+  quay.io/prometheus/node-exporter:{{ etcd_node_exporter_version }} \
   --path.procfs=/host/proc \
   --path.sysfs=/host/sys
 KillMode=mixed
