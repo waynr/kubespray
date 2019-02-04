@@ -8,17 +8,17 @@
     mode: 0700
     recurse: yes
 
-- name: "Gen_certs | create etcd script dir (on {{groups['etcd'][0]}})"
+- name: "Gen_certs | create etcd script dir (on {{first_etcd_host}})"
   file:
     path: "{{ etcd_script_dir }}"
     state: directory
     owner: root
     mode: 0700
   run_once: yes
-  when: inventory_hostname == groups['etcd'][0]
-  delegate_to: "{{groups['etcd'][0]}}"
+  when: inventory_hostname == first_etcd_host
+  delegate_to: "{{first_etcd_host}}"
 
-- name: "Gen_certs | create etcd cert dir (on {{groups['etcd'][0]}})"
+- name: "Gen_certs | create etcd cert dir (on {{first_etcd_host}})"
   file:
     path: "{{ etcd_cert_dir }}"
     group: "{{ etcd_cert_group }}"
@@ -27,18 +27,18 @@
     recurse: yes
     mode: 0700
   run_once: yes
-  when: inventory_hostname == groups['etcd'][0]
-  delegate_to: "{{groups['etcd'][0]}}"
+  when: inventory_hostname == first_etcd_host
+  delegate_to: "{{first_etcd_host}}"
 
 - name: Gen_certs | write openssl config
   template:
     src: "openssl.conf.j2"
     dest: "{{ etcd_config_dir }}/openssl.conf"
   run_once: yes
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
-    - inventory_hostname == groups['etcd'][0]
+    - inventory_hostname == first_etcd_host
 
 - name: Gen_certs | copy certs generation script
   template:
@@ -46,10 +46,10 @@
     dest: "{{ etcd_script_dir }}/make-ssl-etcd.sh"
     mode: 0700
   run_once: yes
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
-    - inventory_hostname == groups['etcd'][0]
+    - inventory_hostname == first_etcd_host
 
 - name: Gen_certs | run cert generation script
   command: "bash -x {{ etcd_script_dir }}/make-ssl-etcd.sh -f {{ etcd_config_dir }}/openssl.conf -d {{ etcd_cert_dir }}"
@@ -65,10 +65,10 @@
                 {% endif %}
               {% endfor %}"
   run_once: yes
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
-    - inventory_hostname == groups['etcd'][0]
+    - inventory_hostname == first_etcd_host
   notify: set etcd_secret_changed
 
 - name: Gen_certs | Gather etcd master certs
@@ -88,11 +88,11 @@
         '{{ etcd_cert_dir }}/node-{{ node }}.pem',
         '{{ etcd_cert_dir }}/node-{{ node }}-key.pem',
         {% endfor %}]"
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{first_etcd_host}}"
   when:
     - inventory_hostname in groups['etcd']
     - sync_certs|default(false)
-    - inventory_hostname != groups['etcd'][0]
+    - inventory_hostname != first_etcd_host
   notify: set etcd_secret_changed
 
 - name: Gen_certs | Write etcd master certs
@@ -106,7 +106,7 @@
   when:
     - inventory_hostname in groups['etcd']
     - sync_certs|default(false)
-    - inventory_hostname != groups['etcd'][0]
+    - inventory_hostname != first_etcd_host
   loop_control:
     label: "{{ item.item }}"
 
@@ -134,7 +134,7 @@
   no_log: true
   register: etcd_node_certs
   check_mode: no
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{first_etcd_host}}"
   when: (('calico-rr' in groups and inventory_hostname in groups['calico-rr']) or
         inventory_hostname in groups['k8s-cluster']) and
         sync_certs|default(false) and inventory_hostname not in groups['etcd']

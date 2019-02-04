@@ -18,14 +18,14 @@
 - name: Calculate kubeadm CA cert hash
   shell: openssl x509 -pubkey -in {{ kube_cert_dir }}/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
   register: kubeadm_ca_hash
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Create kubeadm token for joining nodes with 24h expiration (default)
   command: "{{ bin_dir }}/kubeadm token create"
   run_once: true
   register: temp_token
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
 
 - name: gets the kubeadm version
   command: "{{ bin_dir }}/kubeadm version -o short"
@@ -97,7 +97,7 @@
     {{ bin_dir }}/kubectl --kubeconfig {{ kube_config_dir }}/admin.conf get configmap kube-proxy -n kube-system -o yaml
     | sed 's#server:.*#server:\ {{ kube_apiserver_endpoint }}#g'
     | {{ bin_dir }}/kubectl --kubeconfig {{ kube_config_dir }}/admin.conf replace -f -
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
   when:
     - kubeadm_config_api_fqdn is not defined
@@ -118,7 +118,7 @@
 
 - name: Restart all kube-proxy pods to ensure that they load the new configmap
   shell: "{{ bin_dir }}/kubectl --kubeconfig {{ kube_config_dir }}/admin.conf delete pod -n kube-system -l k8s-app=kube-proxy"
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
   when:
     - kubeadm_config_api_fqdn is not defined
@@ -132,7 +132,7 @@
 # is fixed
 - name: Delete kube-proxy daemonset if kube_proxy_remove set, e.g. kube_network_plugin providing proxy services
   shell: "{{ bin_dir }}/kubectl --kubeconfig /etc/kubernetes/admin.conf delete daemonset -n kube-system kube-proxy"
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
   when:
     - kube_proxy_remove

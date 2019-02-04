@@ -371,12 +371,24 @@ ssl_ca_dirs: >-
   {% endif -%}
   ]
 
+# Enable savvy users to define the first kube master node in a different way
+first_kube_master_host: "{{ groups['kube-master']|first }}"
+
+# Enable savvy users to define the first kube worker node in a different way
+first_kube_worker_host: "{{ groups['kube-node']|first }}"
+
+# Enable savvy users to define the first etcd node in a different way
+first_etcd_host: "{{ groups['etcd']|first }}"
+
+# Enable savvy users to define the first bastion node in a different way
+first_bastion_host: "{{ groups['bastion']|first }}"
+
 # Vars for pointing to kubernetes api endpoints
 is_kube_master: "{{ inventory_hostname in groups['kube-master'] }}"
 kube_apiserver_count: "{{ groups['kube-master'] | length }}"
 kube_apiserver_address: "{{ ip | default(ansible_default_ipv4['address']) }}"
 kube_apiserver_access_address: "{{ access_ip | default(kube_apiserver_address) }}"
-first_kube_master: "{{ hostvars[groups['kube-master'][0]]['access_ip'] | default(hostvars[groups['kube-master'][0]]['ip'] | default(hostvars[groups['kube-master'][0]]['ansible_default_ipv4']['address'])) }}"
+first_kube_master: "{{ hostvars[first_kube_master_host]['access_ip'] | default(hostvars[first_kube_master_host]['ip'] | default(hostvars[first_kube_master_host]['ansible_default_ipv4']['address'])) }}"
 loadbalancer_apiserver_localhost: "{{ loadbalancer_apiserver is not defined }}"
 # applied if only external loadbalancer_apiserver is defined, otherwise ignored
 apiserver_loadbalancer_domain_name: "lb-apiserver.kubernetes.local"

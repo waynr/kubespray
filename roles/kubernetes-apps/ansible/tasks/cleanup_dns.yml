@@ -36,7 +36,7 @@
   when:
     - kubeadm_init is defined
     - kubeadm_init.changed|default(false)
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Kubernetes Apps | Delete old KubeDNS resources
   kube:
@@ -64,7 +64,7 @@
   when:
     - kubeadm_init is defined
     - kubeadm_init.changed|default(false)
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Kubernetes Apps | Delete old KubeDNS Autoscaler deployment
   kube:

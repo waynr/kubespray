@@ -8,20 +8,20 @@
     src: controller-manager-config.yml.j2
     dest: /tmp/controller-manager-config.yml
   register: controller_manager_config
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci
 
 - name: "OCI Cloud Controller | Encode Configuration"
   set_fact:
     controller_manager_config_base64: "{{ lookup('file', '/tmp/controller-manager-config.yml') | b64encode }}"
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci
 
 - name: "OCI Cloud Controller | Apply Configuration To Secret"
   template:
     src: cloud-provider.yml.j2
     dest: /tmp/cloud-provider.yml
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci
 
 - name: "OCI Cloud Controller | Apply Configuration"
@@ -29,7 +29,7 @@
     kubectl: "{{ bin_dir }}/kubectl"
     filename: "/tmp/cloud-provider.yml"
     state: latest
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci
 
 - name: "OCI Cloud Controller | Download Controller Manifest"
@@ -41,7 +41,7 @@
   until: "'OK' in result.msg"
   retries: 4
   delay: "{{ retry_stagger | random + 3 }}"
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci
 
 - name: "OCI Cloud Controller | Apply Controller Manifest"
@@ -49,5 +49,5 @@
     kubectl: "{{ bin_dir }}/kubectl"
     filename: "/tmp/oci-cloud-controller-manager.yml"
     state: latest
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   tags: oci

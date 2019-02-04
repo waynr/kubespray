@@ -8,6 +8,6 @@
     - calico_upgrade_enabled
     - calico_upgrade_needed
   run_once: yes
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
 
 - include_tasks: install.yml

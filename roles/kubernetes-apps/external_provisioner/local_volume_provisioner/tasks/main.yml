@@ -48,7 +48,7 @@
     dest: "{{ kube_config_dir }}/addons/local_volume_provisioner/{{ item.file }}"
   with_items: "{{ local_volume_provisioner_templates }}"
   register: local_volume_provisioner_manifests
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
 
 - name: Local Volume Provisioner | Apply manifests
   kube:
@@ -59,6 +59,6 @@
     filename: "{{ kube_config_dir }}/addons/local_volume_provisioner/{{ item.item.file }}"
     state: "latest"
   with_items: "{{ local_volume_provisioner_manifests.results }}"
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
   loop_control:
     label: "{{ item.item.file }}"

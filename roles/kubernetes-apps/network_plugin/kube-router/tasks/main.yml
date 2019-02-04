@@ -9,7 +9,7 @@
     namespace: "kube-system"
     state: "latest"
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: kube-router | Wait for kube-router pods to be ready
   command: "{{bin_dir}}/kubectl -n kube-system get pods -l k8s-app=kube-router -o jsonpath='{.items[?(@.status.containerStatuses[0].ready==false)].metadata.name}'"
@@ -19,4 +19,4 @@
   delay: 10
   ignore_errors: yes
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host

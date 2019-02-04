@@ -5,7 +5,7 @@
   with_items: ["metallb.yml", "metallb-config.yml"]
   register: "rendering"
   when:
-    - "inventory_hostname == groups['kube-master'][0]"
+    - "inventory_hostname == first_kube_master_host"
 - name: "Kubernetes Apps | Install and configure MetalLB"
   kube:
     name: "MetalLB"
@@ -14,4 +14,4 @@
     state: "{{ item.changed | ternary('latest','present') }}"
   with_items: "{{ rendering.results }}"
   when:
-    - "inventory_hostname == groups['kube-master'][0]"
+    - "inventory_hostname == first_kube_master_host"

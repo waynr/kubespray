@@ -16,7 +16,7 @@
   register: manifests
   when:
     - dns_mode != 'none'
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Helm | Apply Helm Manifests (RBAC)
   kube:
@@ -29,7 +29,7 @@
   with_items: "{{ manifests.results }}"
   when:
     - dns_mode != 'none'
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 # Generate necessary certs for securing Helm and Tiller connection with TLS
 - name: Helm | Set up TLS
@@ -41,7 +41,7 @@
     {{ bin_dir }}/helm init --tiller-namespace={{ tiller_namespace }}
     {% if helm_skip_refresh %} --skip-refresh{% endif %}
     {% if helm_stable_repo_url is defined %} --stable-repo-url {{ helm_stable_repo_url }}{% endif %}
-    {% if inventory_hostname == groups['kube-master'][0] %}
+    {% if inventory_hostname == first_kube_master_host %}
     --upgrade --tiller-image={{ tiller_image_repo }}:{{ tiller_image_tag }}
     {% if rbac_enabled %} --service-account=tiller{% endif %}
     {% if tiller_node_selectors is defined %} --node-selectors {{ tiller_node_selectors }}{% endif %}
@@ -75,7 +75,7 @@
   changed_when: false
   when:
     - (tiller_override is defined and tiller_override != "") or (kube_version is version('v1.11.1', '>='))
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   environment: "{{proxy_env}}"
 
 - name: Helm | Set up bash completion

@@ -31,12 +31,12 @@
     '{ "Network": "{{ kube_pods_subnet }}", "SubnetLen": {{ kube_network_node_prefix }}, "Backend": { "Type": "{{ flannel_backend_type }}" } }'
   retries: 4
   delay: "{{ retry_stagger | random + 3 }}"
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{ first_etcd_host }}"
   changed_when: false
   run_once: true
   environment:
-    ETCDCTL_CERT_FILE: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}.pem"
-    ETCDCTL_KEY_FILE: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}-key.pem"
+    ETCDCTL_CERT_FILE: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}.pem"
+    ETCDCTL_KEY_FILE: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}-key.pem"
 
 - name: Canal | Create canal node manifests
   template:

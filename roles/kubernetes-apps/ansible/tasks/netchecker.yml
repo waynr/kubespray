@@ -16,7 +16,7 @@
     kubectl: "{{bin_dir}}/kubectl"
     resource: "deploy"
     state: latest
-  when: inventory_hostname == groups['kube-master'][0] and netchecker_server_manifest.stat.exists
+  when: inventory_hostname == first_kube_master_host and netchecker_server_manifest.stat.exists
   tags:
     - upgrade
 
@@ -49,7 +49,7 @@
   with_items: "{{ netchecker_templates }}"
   register: manifests
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Kubernetes Apps | Purge old Netchecker server
   kube:
@@ -58,7 +58,7 @@
     kubectl: "{{bin_dir}}/kubectl"
     resource: "po"
     state: absent
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
 
 - name: Kubernetes Apps | Start Netchecker Resources
   kube:
@@ -69,4 +69,4 @@
     filename: "{{kube_config_dir}}/{{item.item.file}}"
     state: "latest"
   with_items: "{{ manifests.results }}"
-  when: inventory_hostname == groups['kube-master'][0] and not item is skipped
+  when: inventory_hostname == first_kube_master_host and not item is skipped

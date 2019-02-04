@@ -13,6 +13,6 @@
     secondaryclusterIP: "{{ skydns_server_secondary }}"
   when:
     - enable_nodelocaldns == True
-    - inventory_hostname == groups['kube-master'] | first
+    - inventory_hostname == first_kube_master_host
   tags:
     - nodelocaldns

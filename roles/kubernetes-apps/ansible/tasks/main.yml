@@ -9,12 +9,12 @@
   until: result.status == 200
   retries: 10
   delay: 2
-  when: inventory_hostname == groups['kube-master'][0]
+  when: inventory_hostname == first_kube_master_host
 
 - name: Kubernetes Apps | Cleanup DNS
   import_tasks: tasks/cleanup_dns.yml
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - upgrade
     - dnsmasq
@@ -26,7 +26,7 @@
   import_tasks: "tasks/coredns.yml"
   when:
     - dns_mode in ['coredns', 'coredns_dual']
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - coredns
 
@@ -34,7 +34,7 @@
   import_tasks: "tasks/nodelocaldns.yml"
   when:
     - enable_nodelocaldns == True
-    - inventory_hostname == groups['kube-master'] | first
+    - inventory_hostname == first_kube_master_host
   tags:
     - nodelocaldns
 
@@ -42,7 +42,7 @@
   import_tasks: "tasks/kubedns.yml"
   when:
     - dns_mode in ['kubedns', 'dnsmasq_kubedns']
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - dnsmasq
 
@@ -61,7 +61,7 @@
     - "{{ nodelocaldns_manifests.results | default({}) }}"
   when:
     - dns_mode != 'none'
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
     - not item is skipped
   register: resource_result
   until: resource_result is succeeded

@@ -16,7 +16,7 @@
   register: kubedns_manifests
   when:
     - dns_mode in ['kubedns','dnsmasq_kubedns']
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - dnsmasq
     - kubedns
@@ -36,7 +36,7 @@
              }'
   when:
     - dns_mode in ['kubedns', 'dnsmasq_kubedns']
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
     - rbac_enabled and kubedns_version is version("1.11.0", "<", strict=True)
   tags:
     - dnsmasq

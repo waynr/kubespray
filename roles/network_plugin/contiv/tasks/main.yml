@@ -94,7 +94,7 @@
   when:
     - contiv_enable_api_proxy
     - contiv_generate_certificate
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Contiv | Check for cert key existence
@@ -104,7 +104,7 @@
   when:
     - contiv_enable_api_proxy
     - contiv_generate_certificate
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Contiv | Generate contiv-api-proxy certificates
@@ -113,7 +113,7 @@
     - contiv_enable_api_proxy
     - contiv_generate_certificate
     - (not contiv_certificate_key_state.stat.exists)
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Contiv | Fetch the generated certificate
@@ -127,7 +127,7 @@
   when:
     - contiv_enable_api_proxy
     - contiv_generate_certificate
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Contiv | Copy the generated certificate on nodes
@@ -138,7 +138,7 @@
     - auth_proxy_key.pem
     - auth_proxy_cert.pem
   when:
-    - inventory_hostname != groups['kube-master'][0]
+    - inventory_hostname != first_kube_master_host
     - inventory_hostname in groups['kube-master']
     - contiv_enable_api_proxy
     - contiv_generate_certificate

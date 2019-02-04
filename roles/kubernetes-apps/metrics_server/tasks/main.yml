@@ -9,7 +9,7 @@
     path: "{{ kube_config_dir }}/addons/metrics_server"
     state: absent
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - upgrade
 
@@ -21,7 +21,7 @@
     group: root
     mode: 0755
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Metrics Server | Templates list
   set_fact:
@@ -43,7 +43,7 @@
   with_items: "{{ metrics_server_templates }}"
   register: metrics_server_manifests
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: Metrics Server | Apply manifests
   kube:
@@ -54,4 +54,4 @@
     state: "latest"
   with_items: "{{ metrics_server_manifests.results }}"
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host

@@ -57,11 +57,11 @@
      }'
   environment:
     ETCDCTL_API: 3
-    ETCDCTL_CERT: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}.pem"
-    ETCDCTL_KEY: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}-key.pem"
+    ETCDCTL_CERT: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}.pem"
+    ETCDCTL_KEY: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}-key.pem"
   retries: 4
   delay: "{{ retry_stagger | random + 3 }}"
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{ first_etcd_host }}"
   when:
     - calico_version is version("v3.0.0", ">=")
 
@@ -75,11 +75,11 @@
        "cluster_id": "{{ cluster_id }}"
      }'
   environment:
-    ETCDCTL_CERT_FILE: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}.pem"
-    ETCDCTL_KEY_FILE: "{{ etcd_cert_dir }}/admin-{{ groups['etcd'][0] }}-key.pem"
+    ETCDCTL_CERT_FILE: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}.pem"
+    ETCDCTL_KEY_FILE: "{{ etcd_cert_dir }}/admin-{{ first_etcd_host }}-key.pem"
   retries: 4
   delay: "{{ retry_stagger | random + 3 }}"
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{ first_etcd_host }}"
   when:
     - calico_version is version("v3.0.0", "<")
 

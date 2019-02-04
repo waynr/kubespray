@@ -6,7 +6,7 @@
     ETCDCTL_CERT_FILE: "{{ etcd_cert_dir }}/node-{{ inventory_hostname }}.pem"
     ETCDCTL_KEY_FILE: "{{ etcd_cert_dir }}/node-{{ inventory_hostname }}-key.pem"
   register: old_data_exists
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{ first_etcd_host }}"
   changed_when: false
   when: kube_apiserver_storage_backend == "etcd3"
   failed_when: false

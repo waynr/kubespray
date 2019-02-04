@@ -5,7 +5,7 @@
     path: "{{ kube_config_dir }}/addons/ingress_nginx"
     state: absent
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - upgrade
 
@@ -14,7 +14,7 @@
     {{ bin_dir }}/kubectl delete namespace {{ ingress_nginx_namespace }}
   ignore_errors: yes
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   tags:
     - upgrade
 
@@ -26,7 +26,7 @@
     group: root
     mode: 0755
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: NGINX Ingress Controller | Templates list
   set_fact:
@@ -57,7 +57,7 @@
   with_items: "{{ ingress_nginx_templates }}"
   register: ingress_nginx_manifests
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
 
 - name: NGINX Ingress Controller | Apply manifests
   kube:
@@ -69,4 +69,4 @@
     state: "latest"
   with_items: "{{ ingress_nginx_manifests.results }}"
   when:
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host

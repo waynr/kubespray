@@ -59,7 +59,7 @@
   with_items:
     - "dnsmasq-clusterrolebinding.yml"
     - "dnsmasq-serviceaccount.yml"
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Apply dnsmasq RBAC manifests
@@ -67,7 +67,7 @@
   with_items:
     - "dnsmasq-clusterrolebinding.yml"
     - "dnsmasq-serviceaccount.yml"
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Create dnsmasq manifests
@@ -79,7 +79,7 @@
     - {name: dnsmasq, file: dnsmasq-svc.yml, type: svc}
     - {name: dnsmasq-autoscaler, file: dnsmasq-autoscaler.yml, type: deployment}
   register: manifests
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Start Resources
@@ -91,7 +91,7 @@
     filename: "{{kube_config_dir}}/{{item.item.file}}"
     state: "latest"
   with_items: "{{ manifests.results }}"
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: Check for dnsmasq port (pulling image and running container)
@@ -99,4 +99,4 @@
     host: "{{dnsmasq_dns_server}}"
     port: 53
     timeout: 180
-  when: inventory_hostname == groups['kube-node'][0] and groups['kube-node'][0] in ansible_play_hosts
+  when: inventory_hostname == first_kube_worker_host and first_kube_worker_host in ansible_play_hosts

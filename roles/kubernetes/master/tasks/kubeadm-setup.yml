@@ -3,7 +3,7 @@
   stat:
     path: "{{ kube_cert_dir }}/apiserver.pem"
   register: old_apiserver_cert
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: kubeadm | Migrate old certs if necessary
@@ -14,7 +14,7 @@
   stat:
     path: "{{ kube_cert_dir }}/sa.key"
   register: sa_key_before
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: kubeadm | Check if kubeadm has already run
@@ -131,7 +131,7 @@
   register: kubeadm_init
   # Retry is because upload config sometimes fails
   retries: 3
-  when: inventory_hostname == groups['kube-master']|first and not kubeadm_already_run.stat.exists
+  when: inventory_hostname == first_kube_master_host and not kubeadm_already_run.stat.exists
   failed_when: kubeadm_init.rc != 0 and "field is immutable" not in kubeadm_init.stderr
   notify: Master | restart kubelet
 
@@ -149,7 +149,7 @@
   register: kubeadm_upgrade
   # Retry is because upload config sometimes fails
   retries: 3
-  when: inventory_hostname == groups['kube-master']|first and (kubeadm_config.changed and kubeadm_already_run.stat.exists)
+  when: inventory_hostname == first_kube_master_host and (kubeadm_config.changed and kubeadm_already_run.stat.exists)
   failed_when: kubeadm_upgrade.rc != 0 and "field is immutable" not in kubeadm_upgrade.stderr
   notify: Master | restart kubelet
 
@@ -170,7 +170,7 @@
     - "{{ kube_cert_dir }}/sa.key"
     - "{{ kube_cert_dir }}/sa.pub"
   register: kubeadm_certs
-  delegate_to: "{{ groups['kube-master']|first }}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: kubeadm | write out kubeadm certs
@@ -183,14 +183,14 @@
   no_log: true
   register: copy_kubeadm_certs
   with_items: "{{ kubeadm_certs.results }}"
-  when: inventory_hostname != groups['kube-master']|first
+  when: inventory_hostname != first_kube_master_host
 
 - name: kubeadm | Init other uninitialized masters
   command: timeout -k 600s 600s {{ bin_dir }}/kubeadm init --config={{ kube_config_dir }}/kubeadm-config.{{ kubeadmConfig_api_version }}.yaml --ignore-preflight-errors=all
   register: kubeadm_init
   retries: 10
   until: kubeadm_init is succeeded or "field is immutable" in kubeadm_init.stderr
-  when: inventory_hostname != groups['kube-master']|first and not kubeadm_already_run.stat.exists
+  when: inventory_hostname != first_kube_master_host and not kubeadm_already_run.stat.exists
   failed_when: kubeadm_init.rc != 0 and "field is immutable" not in kubeadm_init.stderr
   notify: Master | restart kubelet
 
@@ -205,7 +205,7 @@
     --allow-release-candidate-upgrades
     --etcd-upgrade=false
   register: kubeadm_upgrade
-  when: inventory_hostname != groups['kube-master']|first and (kubeadm_config.changed and kubeadm_already_run.stat.exists)
+  when: inventory_hostname != first_kube_master_host and (kubeadm_config.changed and kubeadm_already_run.stat.exists)
   failed_when: kubeadm_upgrade.rc != 0 and "field is immutable" not in kubeadm_upgrade.stderr
   notify: Master | restart kubelet
 
@@ -213,7 +213,7 @@
   stat:
     path: "{{ kube_cert_dir }}/sa.key"
   register: sa_key_after
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   run_once: true
 
 - name: kubeadm | Set secret_changed if service account key was updated
@@ -228,6 +228,6 @@
 
 - name: kubeadm | Remove taint for master with node role
   command: "{{ bin_dir }}/kubectl --kubeconfig {{ kube_config_dir }}/admin.conf taint node {{ inventory_hostname }} node-role.kubernetes.io/master:NoSchedule-"
-  delegate_to: "{{groups['kube-master']|first}}"
+  delegate_to: "{{ first_kube_master_host }}"
   when: inventory_hostname in groups['kube-node']
   failed_when: false

@@ -4,7 +4,7 @@
     paths: "{{ etcd_cert_dir }}"
     patterns: "ca.pem,node*.pem"
     get_checksum: true
-  delegate_to: "{{groups['etcd'][0]}}"
+  delegate_to: "{{ first_etcd_host }}"
   register: etcdcert_master
   run_once: true
 

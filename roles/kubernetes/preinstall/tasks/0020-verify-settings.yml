@@ -139,7 +139,7 @@
   shell: "{{ bin_dir }}/calicoctl version  | grep 'Cluster Version:' | awk '{ print $3}'"
   register: calico_version_on_server
   run_once: yes
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "{{ first_kube_master_host }}"
   when:
     - kube_network_plugin == 'calico'
 
@@ -152,7 +152,7 @@
     - kube_network_plugin == 'calico'
     - 'calico_version_on_server.stdout is defined'
     - 'calico_version_on_server.stdout != ""'
-    - inventory_hostname == groups['kube-master'][0]
+    - inventory_hostname == first_kube_master_host
   run_once: yes
 
 - name: "Check that kube_service_addresses is a network range"

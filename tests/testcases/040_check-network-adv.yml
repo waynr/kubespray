@@ -25,7 +25,7 @@
 
     - name: Wait for netchecker server
       shell: "{{ bin_dir }}/kubectl get pods --namespace {{netcheck_namespace}} | grep ^netchecker-server"
-      delegate_to: "{{groups['kube-master'][0]}}"
+      delegate_to: "{{ first_kube_master_host }}"
       run_once: true
       register: ncs_pod
       until: ncs_pod.stdout.find('Running') != -1
@@ -35,7 +35,7 @@
     - name: Wait for netchecker agents
       shell: "{{ bin_dir }}/kubectl get pods --namespace {{netcheck_namespace}} | grep '^netchecker-agent-.*Running'"
       run_once: true
-      delegate_to: "{{groups['kube-master'][0]}}"
+      delegate_to: "{{ first_kube_master_host }}"
       register: nca_pod
       until: nca_pod.stdout_lines|length >= groups['kube-node']|intersect(play_hosts)|length * 2
       retries: 3
@@ -44,7 +44,7 @@
     - name: Get netchecker agents
       uri: url=http://{{ ansible_default_ipv4.address }}:{{netchecker_port}}/api/v1/agents/ return_content=yes
       run_once: true
-      delegate_to: "{{groups['kube-master'][0]}}"
+      delegate_to: "{{ first_kube_master_host }}"
       register: agents
       retries: 18
       delay: "{{ agent_report_interval }}"
@@ -60,7 +60,7 @@
 
     - name: Check netchecker status
       uri: url=http://{{ ansible_default_ipv4.address }}:{{netchecker_port}}/api/v1/connectivity_check status_code=200 return_content=yes
-      delegate_to: "{{groups['kube-master'][0]}}"
+      delegate_to: "{{ first_kube_master_host }}"
       run_once: true
       register: result
       retries: 3
@@ -74,7 +74,7 @@
       failed_when: not result is success
       run_once: true
       when: not agents.content == '{}'
-      delegate_to: "{{groups['kube-master'][0]}}"
+      delegate_to: "{{ first_kube_master_host }}"
 
     - debug: msg="Cannot get reports from agents, consider as PASSING"
       run_once: true
