@@ -46,10 +46,6 @@ variable "network_name" {}
 
 variable "flavor_bastion" {}
 
-variable "network_id" {
-  default = ""
-}
-
 variable "k8s_master_fips" {
   type = "list"
 }

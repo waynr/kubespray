@@ -1,6 +1,13 @@
 variable "external_net" {}
 
-variable "network_name" {}
+variable "vxlan_network_name" {
+}
+
+variable "vlan_network_name" {
+}
+
+variable "vlan_subnet_name" {
+}
 
 variable "cluster_name" {}
 
@@ -10,4 +17,7 @@ variable "dns_nameservers" {
 
 variable "subnet_cidr" {}
 
-variable "use_neutron" {}
+variable "neutron_vxlan_enabled" {}
+
+variable "neutron_vlan_enabled" {}
+

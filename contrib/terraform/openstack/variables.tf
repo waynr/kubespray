@@ -98,14 +98,29 @@ variable "flavor_gfs_node" {
   default     = 3
 }
 
-variable "network_name" {
+variable "vxlan_network_name" {
   description = "name of the internal network to use"
   default     = "internal"
 }
 
-variable "use_neutron" {
-  description = "Use neutron"
+variable "vlan_network_name" {
+  description = "name of vlan network to use"
+  default     = "INSIDE_NET"
+}
+
+variable "vlan_subnet_name" {
+  description = "name of vlan subnet to use"
+  default = "INSIDE_NET_SUBNET"
+}
+
+variable "neutron_vxlan_enabled" {
+  description = "Use neutron vxlan"
   default     = 1
+}
+
+variable "neutron_vlan_enabled" {
+  description = "Use existing openstack vlan"
+  default = 0
 }
 
 variable "subnet_cidr" {

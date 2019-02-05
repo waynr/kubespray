@@ -6,12 +6,16 @@ provider "openstack" {
 module "network" {
   source = "modules/network"
 
-  external_net    = "${var.external_net}"
-  network_name    = "${var.network_name}"
-  subnet_cidr     = "${var.subnet_cidr}"
-  cluster_name    = "${var.cluster_name}"
-  dns_nameservers = "${var.dns_nameservers}"
-  use_neutron     = "${var.use_neutron}"
+  external_net          = "${var.external_net}"
+  subnet_cidr           = "${var.subnet_cidr}"
+  cluster_name          = "${var.cluster_name}"
+  dns_nameservers       = "${var.dns_nameservers}"
+  neutron_vxlan_enabled = "${var.neutron_vxlan_enabled}"
+  neutron_vlan_enabled  = "${var.neutron_vlan_enabled}"
+  vlan_network_name     = "${var.vlan_network_name}"
+  vlan_subnet_name      = "${var.vlan_subnet_name}"
+  vxlan_network_name    = "${var.vxlan_network_name}"
+
 }
 
 module "ips" {
@@ -23,8 +27,6 @@ module "ips" {
   floatingip_pool               = "${var.floatingip_pool}"
   number_of_bastions            = "${var.number_of_bastions}"
   external_net                  = "${var.external_net}"
-  network_name                  = "${var.network_name}"
-  router_id                     = "${module.network.router_id}"
 }
 
 module "compute" {
@@ -51,7 +53,7 @@ module "compute" {
   flavor_k8s_node                              = "${var.flavor_k8s_node}"
   flavor_etcd                                  = "${var.flavor_etcd}"
   flavor_gfs_node                              = "${var.flavor_gfs_node}"
-  network_name                                 = "${var.network_name}"
+  network_name                                 = "${module.network.network_name}"
   flavor_bastion                               = "${var.flavor_bastion}"
   k8s_master_fips                              = "${module.ips.k8s_master_fips}"
   k8s_master_no_etcd_fips                      = "${module.ips.k8s_master_no_etcd_fips}"
@@ -67,7 +69,6 @@ module "compute" {
   master_anti_affinity                         = "${var.master_anti_affinity}"
   openstack_user_data                          = "${var.openstack_user_data}"
 
-  network_id = "${module.network.router_id}"
 }
 
 module "loadbalancer" {
