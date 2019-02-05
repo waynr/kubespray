@@ -218,6 +218,10 @@ resource "openstack_compute_instance_v2" "etcd" {
     depends_on       = "${var.network_id}"
   }
 
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.inventory_dir}/host_vars/${self.name}/ && echo 'ansible_ssh_host: ${self.access_ip_v4}' > ${var.inventory_dir}/host_vars/${self.name}/ansible_ssh_host.yml"
+  }
+
 }
 
 resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
@@ -250,6 +254,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
     depends_on       = "${var.network_id}"
   }
 
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.inventory_dir}/host_vars/${self.name}/ && echo 'ansible_ssh_host: ${self.access_ip_v4}' > ${var.inventory_dir}/host_vars/${self.name}/ansible_ssh_host.yml"
+  }
+
 }
 
 resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
@@ -279,6 +287,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
     kubespray_groups = "kube-master,${var.supplementary_master_groups},k8s-cluster,vault,no-floating" # use of kubespray_groups is deprecated; use 'groups' instead
     groups = "kube-master,${var.supplementary_master_groups},k8s-cluster,vault,no-floating"
     depends_on       = "${var.network_id}"
+  }
+
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.inventory_dir}/host_vars/${self.name}/ && echo 'ansible_ssh_host: ${self.access_ip_v4}' > ${var.inventory_dir}/host_vars/${self.name}/ansible_ssh_host.yml"
   }
 
 }
@@ -342,6 +354,10 @@ resource "openstack_compute_instance_v2" "k8s_node_no_floating_ip" {
     depends_on       = "${var.network_id}"
   }
 
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.inventory_dir}/host_vars/${self.name}/ && echo 'ansible_ssh_host: ${self.access_ip_v4}' > ${var.inventory_dir}/host_vars/${self.name}/ansible_ssh_host.yml"
+  }
+
 }
 
 resource "openstack_compute_floatingip_associate_v2" "bastion" {
@@ -398,6 +414,10 @@ resource "openstack_compute_instance_v2" "glusterfs_node_no_floating_ip" {
     kubespray_groups = "gfs-cluster,network-storage,no-floating" # use of kubespray_groups is deprecated; use 'groups' instead
     groups = "gfs-cluster,network-storage,no-floating"
     depends_on       = "${var.network_id}"
+  }
+
+  provisioner "local-exec" {
+    command = "mkdir -p ${var.inventory_dir}/host_vars/${self.name}/ && echo 'ansible_ssh_host: ${self.access_ip_v4}' > ${var.inventory_dir}/host_vars/${self.name}/ansible_ssh_host.yml"
   }
 
 }
