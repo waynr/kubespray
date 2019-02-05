@@ -14,9 +14,7 @@
     state: directory
     owner: root
     mode: 0700
-  run_once: yes
   when: inventory_hostname == first_etcd_host
-  delegate_to: "{{first_etcd_host}}"
 
 - name: "Gen_certs | create etcd cert dir (on {{first_etcd_host}})"
   file:
@@ -26,16 +24,12 @@
     owner: kube
     recurse: yes
     mode: 0700
-  run_once: yes
   when: inventory_hostname == first_etcd_host
-  delegate_to: "{{first_etcd_host}}"
 
 - name: Gen_certs | write openssl config
   template:
     src: "openssl.conf.j2"
     dest: "{{ etcd_config_dir }}/openssl.conf"
-  run_once: yes
-  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
     - inventory_hostname == first_etcd_host
@@ -45,8 +39,6 @@
     src: "make-ssl-etcd.sh.j2"
     dest: "{{ etcd_script_dir }}/make-ssl-etcd.sh"
     mode: 0700
-  run_once: yes
-  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
     - inventory_hostname == first_etcd_host
@@ -64,8 +56,6 @@
                     {{ h }}
                 {% endif %}
               {% endfor %}"
-  run_once: yes
-  delegate_to: "{{first_etcd_host}}"
   when:
     - gen_certs|default(false)
     - inventory_hostname == first_etcd_host
