@@ -12,20 +12,20 @@ data "openstack_networking_subnet_v2" "k8s_vlan_subnet" {
 # VXLAN network option - Terraform creates networking resources
 resource "openstack_networking_router_v2" "k8s_vxlan_router" {
   name                = "${var.cluster_name}-router"
-  count               = "${var.neutron_vxlan_enabled != "0" ? 1 : 0}"
+  count               = "${var.neutron_vlan_enabled != "0" ? 0 : 1}"
   admin_state_up      = "true"
   external_network_id = "${var.external_net}"
 }
 
 resource "openstack_networking_network_v2" "k8s_vxlan_network" {
   name           = "${var.vxlan_network_name}"
-  count          = "${var.neutron_vxlan_enabled != "0" ? 1 : 0}"
+  count          = "${var.neutron_vlan_enabled != "0" ? 0 : 1}"
   admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "k8s_vxlan_subnet" {
   name            = "${var.cluster_name}-internal-network"
-  count           = "${var.neutron_vxlan_enabled != "0" ? 1 : 0}"
+  count           = "${var.neutron_vlan_enabled != "0" ? 0 : 1}"
   network_id      = "${openstack_networking_network_v2.k8s_vxlan_network.id}"
   cidr            = "${var.subnet_cidr}"
   ip_version      = 4
@@ -33,7 +33,7 @@ resource "openstack_networking_subnet_v2" "k8s_vxlan_subnet" {
 }
 
 resource "openstack_networking_router_interface_v2" "k8s_vxlan_interface" {
-  count     = "${var.neutron_vxlan_enabled != "0" ? 1 : 0}"
+  count     = "${var.neutron_vlan_enabled != "0" ? 0 : 1}"
   router_id = "${openstack_networking_router_v2.k8s_vxlan_router.id}"
   subnet_id = "${openstack_networking_subnet_v2.k8s_vxlan_subnet.id}"
 }

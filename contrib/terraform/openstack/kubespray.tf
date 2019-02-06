@@ -6,15 +6,14 @@ provider "openstack" {
 module "network" {
   source = "modules/network"
 
-  external_net          = "${var.external_net}"
-  subnet_cidr           = "${var.subnet_cidr}"
-  cluster_name          = "${var.cluster_name}"
-  dns_nameservers       = "${var.dns_nameservers}"
-  neutron_vxlan_enabled = "${var.neutron_vxlan_enabled}"
-  neutron_vlan_enabled  = "${var.neutron_vlan_enabled}"
-  vlan_network_name     = "${var.vlan_network_name}"
-  vlan_subnet_name      = "${var.vlan_subnet_name}"
-  vxlan_network_name    = "${var.vxlan_network_name}"
+  external_net         = "${var.external_net}"
+  subnet_cidr          = "${var.subnet_cidr}"
+  cluster_name         = "${var.cluster_name}"
+  dns_nameservers      = "${var.dns_nameservers}"
+  neutron_vlan_enabled = "${var.neutron_vlan_enabled}"
+  vlan_network_name    = "${var.vlan_network_name}"
+  vlan_subnet_name     = "${var.vlan_subnet_name}"
+  vxlan_network_name   = "${var.vxlan_network_name}"
 
 }
 

@@ -113,11 +113,6 @@ variable "vlan_subnet_name" {
   default = "INSIDE_NET_SUBNET"
 }
 
-variable "neutron_vxlan_enabled" {
-  description = "Use neutron vxlan"
-  default     = 1
-}
-
 variable "neutron_vlan_enabled" {
   description = "Use existing openstack vlan"
   default = 0
