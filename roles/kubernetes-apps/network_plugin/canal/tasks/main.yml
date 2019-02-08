@@ -9,3 +9,9 @@
     state: "latest"
   with_items: "{{ canal_manifests.results }}"
   when: inventory_hostname == groups['kube-master'][0] and not item is skipped
+
+- name: Flannel | Wait for flannel subnet.env file presence
+  wait_for:
+    path: /run/flannel/subnet.env
+    delay: 5
+    timeout: 600
