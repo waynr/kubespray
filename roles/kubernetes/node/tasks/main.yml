@@ -34,13 +34,9 @@
     src: authentication-token-webhook.conf.j2
     dest: "{{ kube_config_dir }}/authentication-token-webhook.conf"
     backup: yes
+  when: kube_authentication_token_webhook_url is defined
   tags:
     - kube-apiserver
-
-- name: "Set authentication-token-webhook-config-file on kube-apiserver"
-  set_fact:
-    kube_kubeadm_apiserver_extra_args:
-      authentication-token-webhook-config-file: "{{ kube_config_dir }}/authentication-token-webhook.conf"
 
 - name: Write kubelet config file (kubeadm)
   template:
