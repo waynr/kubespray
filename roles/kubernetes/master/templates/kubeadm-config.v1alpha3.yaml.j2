@@ -59,6 +59,9 @@ apiServerExtraArgs:
 {% if kube_version is version('v1.10', '<') %}
   admission-control: {{ kube_apiserver_admission_control | join(',') }}
 {% else %}
+{% if kube_authentication_token_webhook_url is defined %}
+  authentication-token-webhook-config-file: "{{ kube_config_dir }}/authentication-token-webhook.conf"
+{% endif %}
 {% if kube_apiserver_enable_admission_plugins|length > 0 %}
   enable-admission-plugins: {{ kube_apiserver_enable_admission_plugins | join(',') }}
 {% endif %}
