@@ -41,7 +41,6 @@
   set_fact:
     kube_kubeadm_apiserver_extra_args:
       authentication-token-webhook-config-file: "{{ kube_config_dir }}/authentication-token-webhook.conf"
-      enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,PodSecurityPolicy"
 
 - name: Write kubelet config file (kubeadm)
   template:
