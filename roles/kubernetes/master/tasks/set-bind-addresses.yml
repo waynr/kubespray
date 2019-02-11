@@ -1,0 +1,5 @@
+- name: Set scheduler and controller manager bind addresses to host private IP
+  set_fact:
+    kube_scheduler_bind_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    kube_controller_manager_bind_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+  when: cloud_provider is defined and cloud_provider == 'openstack'

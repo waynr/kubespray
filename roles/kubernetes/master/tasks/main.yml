@@ -1,4 +1,6 @@
 ---
+- import_tasks: set-bind-addresses.yml
+
 - import_tasks: pre-upgrade.yml
   tags:
     - k8s-pre-upgrade

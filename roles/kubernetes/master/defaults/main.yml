@@ -22,8 +22,8 @@ force_etcd3: false
 
 # Associated interfaces must be reachable by the rest of the cluster, and by
 # CLI/web clients.
-kube_controller_manager_bind_address: 0.0.0.0
-kube_scheduler_bind_address: 0.0.0.0
+kube_controller_manager_bind_address: localhost
+kube_scheduler_bind_address: localhost
 
 # audit support
 kubernetes_audit: false
