@@ -1,5 +1,5 @@
 provider "openstack" {
-  version = "1.5.0"
+  version = "1.15.1"
   use_octavia = "true"
 }
 
@@ -67,7 +67,11 @@ module "compute" {
   etcd_anti_affinity                           = "${var.etcd_anti_affinity}"
   master_anti_affinity                         = "${var.master_anti_affinity}"
   openstack_user_data                          = "${var.openstack_user_data}"
-
+  cluster_cidr                                 = "${var.cluster_cidr}"
+  service_cidr                                 = "${var.service_cidr}"
+  subnet_cidr                                  = "${var.subnet_cidr}"
+  real_network_id                              = "${var.neutron_vlan_enabled != "0" ? module.network.vlan_network_id : module.network.vxlan_network_id }"
+  vip_subnet_id                                = "${module.network.subnet_id}"
 }
 
 module "loadbalancer" {

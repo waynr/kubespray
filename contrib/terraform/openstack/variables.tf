@@ -210,3 +210,11 @@ variable "master_anti_affinity" {
 variable "openstack_user_data" {
   default = ""
 }
+
+variable "service_cidr" {
+  default = ""
+}
+
+variable "cluster_cidr" {
+  default = ""
+}

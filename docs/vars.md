@@ -19,7 +19,8 @@ Some variables of note include:
 * *docker_version* - Specify version of Docker to used (should be quoted
   string)
 * *etcd_version* - Specify version of ETCD to use
-* *ipip* - Enables Calico ipip encapsulation by default
+* *ipip* - Enables Calico ipip encapsulation by default, only works on Calico < 3.0.0 (bool, default true)
+* *ipip_mode* - Sets Calico ipip mode, only works on Calico >= 3.0.0 (valid values: "CrossSubnet", "Always", "Never")
 * *kube_network_plugin* - Sets k8s network plugin (default Calico)
 * *kube_proxy_mode* - Changes k8s proxy mode to iptables mode
 * *kube_version* - Specify a given Kubernetes hyperkube version
