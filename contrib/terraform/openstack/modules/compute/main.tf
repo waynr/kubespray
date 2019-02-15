@@ -102,6 +102,9 @@ resource "openstack_compute_instance_v2" "bastion" {
   flavor_id  = "${var.flavor_bastion}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -132,6 +135,9 @@ resource "openstack_compute_instance_v2" "k8s_master" {
   flavor_id  = "${var.flavor_k8s_master}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -191,6 +197,9 @@ resource "openstack_compute_instance_v2" "k8s_master_no_etcd" {
   flavor_id  = "${var.flavor_k8s_master}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   depends_on = [
     "openstack_networking_port_v2.k8s_master_no_etcd"
@@ -224,6 +233,9 @@ resource "openstack_compute_instance_v2" "etcd" {
   flavor_id  = "${var.flavor_etcd}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -253,6 +265,9 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
   flavor_id  = "${var.flavor_k8s_master}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -284,6 +299,9 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
   flavor_id  = "${var.flavor_k8s_master}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -314,6 +332,9 @@ resource "openstack_compute_instance_v2" "k8s_node" {
   flavor_id  = "${var.flavor_k8s_node}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   network {
     name = "${var.network_name}"
@@ -368,6 +389,9 @@ resource "openstack_compute_instance_v2" "k8s_node_no_floating_ip" {
   flavor_id  = "${var.flavor_k8s_node}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+  lifecycle {
+    ignore_changes = ["user_data"]
+  }
 
   depends_on = [
     "openstack_networking_port_v2.k8s_node_no_floating_ip"
