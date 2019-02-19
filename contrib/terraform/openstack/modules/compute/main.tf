@@ -106,6 +106,10 @@ resource "openstack_compute_instance_v2" "bastion" {
     ignore_changes = ["user_data"]
   }
 
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
+
   network {
     name = "${var.network_name}"
   }
@@ -138,6 +142,10 @@ resource "openstack_compute_instance_v2" "k8s_master" {
   lifecycle {
     ignore_changes = ["user_data"]
   }
+
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
 
   network {
     name = "${var.network_name}"
@@ -237,6 +245,10 @@ resource "openstack_compute_instance_v2" "etcd" {
     ignore_changes = ["user_data"]
   }
 
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
+
   network {
     name = "${var.network_name}"
   }
@@ -268,6 +280,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip" {
   lifecycle {
     ignore_changes = ["user_data"]
   }
+
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
 
   network {
     name = "${var.network_name}"
@@ -303,6 +319,10 @@ resource "openstack_compute_instance_v2" "k8s_master_no_floating_ip_no_etcd" {
     ignore_changes = ["user_data"]
   }
 
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
+
   network {
     name = "${var.network_name}"
   }
@@ -335,6 +355,10 @@ resource "openstack_compute_instance_v2" "k8s_node" {
   lifecycle {
     ignore_changes = ["user_data"]
   }
+
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
 
   network {
     name = "${var.network_name}"
@@ -448,6 +472,10 @@ resource "openstack_compute_instance_v2" "glusterfs_node_no_floating_ip" {
   flavor_id  = "${var.flavor_gfs_node}"
   key_pair   = "${openstack_compute_keypair_v2.k8s.name}"
   user_data  = "${var.openstack_user_data}"
+
+  depends_on = [
+    "data.openstack_networking_subnet_v2.k8s_network_subnet"
+  ]
 
   network {
     name = "${var.network_name}"
