@@ -23,13 +23,15 @@ resource "openstack_lb_listener_v2" "master_lb_listener" {
 }
 
 resource "openstack_lb_monitor_v2" "master_lb_monitor" {
-  count       = "${var.use_loadbalancer}"
-  delay       = 30
-  max_retries = 3
-  pool_id     = "${openstack_lb_pool_v2.master_lb_pool.id}"
-  timeout     = 5
-  type        = "TCP"
-  name        = "${var.cluster_name}_master_lb_mon"
+  count          = "${var.use_loadbalancer}"
+  delay          = 30
+  max_retries    = 3
+  pool_id        = "${openstack_lb_pool_v2.master_lb_pool.id}"
+  timeout        = 5
+  type           = "HTTPS"
+  url_path       = "/healthz"
+  expected_codes = "200"
+  name           = "${var.cluster_name}_master_lb_mon"
 }
 
 resource "openstack_lb_member_v2" "master_lb_members" {
