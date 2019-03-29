@@ -26,7 +26,7 @@ clusterName: {{ cluster_name }}
 etcd:
   external:
       endpoints:
-{% for endpoint in etcd_access_addresses.split(',') %}
+{% for endpoint in etcd_access_addresses.split(',') | sort %}
       - {{ endpoint }}
 {% endfor %}
       caFile: {{ etcd_cert_dir }}/ca.pem
@@ -43,7 +43,7 @@ controlPlaneEndpoint: {{ kubeadm_config_api_fqdn }}:{{ loadbalancer_apiserver.po
 controlPlaneEndpoint: {{ ip | default(ansible_default_ipv4.address) }}:{{ kube_apiserver_port }}
 {% endif %}
 apiServerCertSANs:
-{% for san in  apiserver_sans.split(' ') | unique %}
+{% for san in apiserver_sans.split(' ') | unique | sort %}
   - {{ san }}
 {% endfor %}
 certificatesDir: {{ kube_cert_dir }}
@@ -138,7 +138,7 @@ controllerManagerExtraArgs:
 {% if kube_feature_gates %}
   feature-gates: {{ kube_feature_gates|join(',') }}
 {% endif %}
-{% for key in kube_kubeadm_controller_extra_args %}
+{% for key in kube_kubeadm_controller_extra_args | sort %}
   {{ key }}: "{{ kube_kubeadm_controller_extra_args[key] }}"
 {% endfor %}
 {% if cloud_provider is defined and cloud_provider in ["openstack", "azure", "vsphere", "aws"] %}
@@ -157,7 +157,7 @@ schedulerExtraArgs:
   feature-gates: {{ kube_feature_gates|join(',') }}
 {% endif %}
 {% if kube_kubeadm_scheduler_extra_args|length > 0 %}
-{% for key in kube_kubeadm_scheduler_extra_args %}
+{% for key in kube_kubeadm_scheduler_extra_args | sort %}
   {{ key }}: "{{ kube_kubeadm_scheduler_extra_args[key] }}"
 {% endfor %}
 {% endif %}
